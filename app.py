@@ -7,10 +7,14 @@ import socket
 import ssl
 import cv2
 import numpy as np
-import Levenshtein
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service
+from rapidfuzz.distance import Levenshtein
+# ❌ Selenium disabled for deployment
+# from selenium import webdriver
+# from selenium.webdriver.chrome.options import Options
+# from selenium.webdriver.chrome.service import Service
+# from webdriver_manager.chrome import ChromeDriverManager
+
+
 from datetime import datetime, timezone
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
@@ -18,7 +22,6 @@ import os
 import io
 import zipfile
 from flask import Flask, render_template, request, jsonify, send_file
-from webdriver_manager.chrome import ChromeDriverManager
 
 load_dotenv()
 
@@ -28,6 +31,9 @@ app = Flask(__name__)
 # API KEY (Loaded from .env)
 # ==========================================
 VT_API_KEY = os.getenv("VT_API_KEY")
+
+# ✅ ADD THIS LINE BELOW
+ENABLE_SCREENSHOT = os.getenv("ENABLE_SCREENSHOT", "false").lower() == "true"
 
 def get_headers():
     return {
@@ -409,68 +415,52 @@ def analyze_screenshot_for_brands(screenshot_bytes, url_domain):
 
 @app.route("/api/screenshot_analysis", methods=["POST"])
 def screenshot_analysis():
-    data = request.json
-    url = data.get("url", "")
-    if not url:
-        return jsonify({"error": "URL is required"}), 400
 
+    # 🚫 Disable in deployment
+    if not ENABLE_SCREENSHOT:
+        return jsonify({
+            "message": "Screenshot disabled in deployment",
+            "cv_analysis": {
+                "verdict": "DISABLED",
+                "reason": "Selenium not supported"
+            }
+        })
+
+    # ✅ ENABLED LOCALLY
     try:
-        # Extract the root domain for analysis logic
-        extracted = tldextract.extract(url)
-        root_domain = f"{extracted.domain}.{extracted.suffix}" if extracted.suffix else extracted.domain
+        from selenium import webdriver
+        from selenium.webdriver.chrome.options import Options
 
-        # Setup Headless Chrome
+        data = request.json
+        url = data.get("url", "")
+
         chrome_options = Options()
         chrome_options.add_argument("--headless=new")
         chrome_options.add_argument("--no-sandbox")
         chrome_options.add_argument("--disable-dev-shm-usage")
-        chrome_options.add_argument("--disable-gpu")
-        chrome_options.add_argument("--window-size=1280,720")
-        
-        # Use webdriver-manager to handle driver installation
-        driver_path = ChromeDriverManager().install()
-        
-        # Robust check for cases where webdriver-manager returns a folder or license file instead of the .exe
-        if not str(driver_path).lower().endswith('.exe'):
-            import os
-            base_dir = os.path.dirname(driver_path)
-            # Try to find chromedriver.exe in the same or lower directories
-            found = False
-            for root, dirs, files in os.walk(base_dir):
-                for file in files:
-                    if file.lower() == 'chromedriver.exe':
-                        driver_path = os.path.join(root, file)
-                        found = True
-                        break
-                if found: break
-        
-        service = Service(driver_path)
-        driver = webdriver.Chrome(service=service, options=chrome_options)
-        
-        # Set a strict page load timeout so it doesn't hang on malicious sites
-        driver.set_page_load_timeout(10)
-        
-        try:
-            driver.get(url)
-            screenshot_png = driver.get_screenshot_as_png()
-        finally:
-            driver.quit()
 
-        # Perform OpenCV Analysis
-        analysis_result = analyze_screenshot_for_brands(screenshot_png, root_domain)
-        
-        # Convert to base64 for frontend display
-        b64_screenshot = base64.b64encode(screenshot_png).decode("utf-8")
+        driver = webdriver.Chrome(options=chrome_options)
+        driver.get(url)
+
+        screenshot_png = driver.get_screenshot_as_png()
+        driver.quit()
+
+        # Run your existing visual analysis
+        extracted = tldextract.extract(url)
+        domain = f"{extracted.domain}.{extracted.suffix}"
+
+        result = analyze_screenshot_for_brands(screenshot_png, domain)
 
         return jsonify({
-            "screenshot_base64": b64_screenshot,
-            "cv_analysis": analysis_result
+            "screenshot_base64": base64.b64encode(screenshot_png).decode(),
+            "cv_analysis": result
         })
 
     except Exception as e:
-        return jsonify({"error": "Failed to capture screenshot", "details": str(e)}), 500
-
-
+        return jsonify({
+            "error": "Screenshot failed",
+            "details": str(e)
+        }), 500
 @app.after_request
 def add_cors_headers(response):
     response.headers.add('Access-Control-Allow-Origin', '*')
@@ -587,4 +577,4 @@ def download_extension():
     )
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    app.run()
