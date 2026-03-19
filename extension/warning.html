@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Security Alert | PhishGuard AI</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #0a0e17;
+            color: white;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .container {
+            max-width: 600px;
+            text-align: center;
+            padding: 40px;
+            background: rgba(255, 51, 102, 0.05);
+            border: 1px solid rgba(255, 51, 102, 0.3);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 50px rgba(255, 51, 102, 0.2);
+        }
+        .icon {
+            font-size: 80px;
+            color: #ff3366;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #ff3366;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        p {
+            font-size: 1.1rem;
+            color: #94a3b8;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        .url-box {
+            background: rgba(15, 23, 42, 0.8);
+            padding: 15px;
+            border-radius: 10px;
+            font-family: monospace;
+            color: #ef4444;
+            word-break: break-all;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 51, 102, 0.1);
+        }
+        .buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+        .btn {
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            transition: 0.3s;
+            border: none;
+        }
+        .btn-safe {
+            background: #00e5ff;
+            color: #0a0e17;
+        }
+        .btn-safe:hover {
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.5);
+            transform: translateY(-2px);
+        }
+        .btn-danger {
+            background: transparent;
+            color: #ff3366;
+            border: 1px solid #ff3366;
+        }
+        .btn-danger:hover {
+            background: rgba(255, 51, 102, 0.1);
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">⚠️</div>
+        <h1>Phishing Alert!</h1>
+        <p>PhishGuard AI has blocked this website because it appears to be a fraudulent site attempting to steal your personal or financial information.</p>
+        <div class="url-box" id="target-url">Loading...</div>
+        <p id="reason" style="color: #ff3366; font-weight: bold; margin-bottom: 20px;"></p>
+        <div class="buttons">
+            <button class="btn btn-safe" id="go-back">Get Me Out of Here</button>
+            <button class="btn btn-danger" id="proceed">Proceed anyway (Not recommended)</button>
+        </div>
+    </div>
+    <script src="warning.js"></script>
+</body>
+</html>

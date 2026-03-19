@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "PhishGuard AI Companion",
+  "version": "1.0.2",
+  "description": "Real-time phishing protection for your browser.",
+  "permissions": ["tabs", "storage", "notifications", "webNavigation"],
+  "host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html"
+  }
+}

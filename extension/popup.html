@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { width: 300px; padding: 15px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0a0e17; color: white; }
+    h2 { color: #00e5ff; margin-top: 0; font-size: 1.2rem; }
+    .status { padding: 10px; border-radius: 5px; margin-bottom: 10px; text-align: center; font-weight: bold; }
+    .safe { background: rgba(0, 255, 136, 0.1); color: #00ff88; border: 1px solid rgba(0, 255, 136, 0.3); }
+    .danger { background: rgba(255, 51, 102, 0.1); color: #ff3366; border: 1px solid rgba(255, 51, 102, 0.3); }
+    .info { font-size: 0.9rem; color: #94a3b8; }
+  </style>
+</head>
+<body>
+  <h2>PhishGuard AI</h2>
+  <div id="status-box" class="status safe">Checking...</div>
+  <div class="info">URL: <span id="current-url"></span></div>
+  <script src="popup.js"></script>
+  <div style="font-size: 10px; color: #666; margin-top: 10px; text-align: center;">v1.0.2</div>
+</body>
+</html>
