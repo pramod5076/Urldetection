@@ -3,8 +3,8 @@ requests==2.31.0
 python-whois==0.8.0
 tldextract==5.1.1
 beautifulsoup4==4.12.2
-python-Levenshtein==0.23.0
 python-dotenv==1.0.0
 numpy
 opencv-python-headless
+rapidfuzz
 gunicorn==21.2.0
