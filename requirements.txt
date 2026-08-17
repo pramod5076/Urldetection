@@ -1,4 +1,7 @@
-flask==3.0.0
+fastapi
+uvicorn
+jinja2
+httpx
 requests==2.31.0
 python-whois==0.8.0
 tldextract==5.1.1
@@ -8,3 +11,5 @@ numpy
 opencv-python-headless
 rapidfuzz
 gunicorn==21.2.0
+selenium
+webdriver-manager
